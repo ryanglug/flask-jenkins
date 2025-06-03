@@ -1,0 +1,22 @@
+from flask import Flask
+from auth import register, login, refresh
+from api import post_comment
+from db import close_db
+
+app = Flask(__name__)
+
+
+@app.teardown_appcontext
+def teardown_db(exception):
+    close_db()
+
+
+app.config["DATABASE"] = "auth.db"
+
+app.post("/register")(register)
+app.post("/login")(login)
+app.get("/refresh")(refresh)
+app.post("/comment")(post_comment)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
