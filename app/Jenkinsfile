@@ -1,5 +1,4 @@
 pipeline {
-  agent any
 
   environment {
       IMAGE_NAME = 'ryanglug/jenkins-flask'
@@ -8,11 +7,7 @@ pipeline {
 
   stages {
     stage('Test') {
-      agent {
-        docker {
-          image 'python:3.13-alpine'
-        }
-      }
+      agent 'python'
       steps {
         sh 'apk add --no-cache build-base'
         sh 'pip install -r requirements.txt'
