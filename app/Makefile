@@ -7,4 +7,4 @@ dbpush:
 	python db_push.py
 
 test:
-	pytest
+	pytest -s

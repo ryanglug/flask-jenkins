@@ -1,9 +1,12 @@
 import pytest
 import tempfile
 from app import app
-from db import get_db
+from db import get_db, find_user
 import os
 import shutil
+
+username = "user"
+password = "pass"
 
 
 @pytest.fixture
@@ -25,7 +28,139 @@ def client():
     shutil.rmtree(temp_dir)
 
 
-def test_register(client):
-    response = client.post("/register", json={"username": "user2", "password": "pass"})
+@pytest.fixture
+def create_user(client):
+    response = client.post(
+        "/register", json={"username": username, "password": password}
+    )
+    yield response
 
-    assert response.status_code == 204
+
+def test_register(create_user):
+    # Creates the user
+    assert create_user.status_code == 204
+
+    # User now exists in the db
+    user = find_user(username)
+
+    assert user is not None
+
+
+def test_invalid_register(client, create_user):
+    # Missing body
+    response = client.post("/register", json={"username": "", "password": password})
+
+    assert response.status_code == 400
+
+    # Missing password
+    response = client.post("/register", json={"username": username, "password": ""})
+
+    assert response.status_code == 400
+
+    # Cannot create a user that already exists
+    response = client.post(
+        "/register", json={"username": username, "password": password}
+    )
+
+    assert response.status_code == 400
+
+    assert response.get_json()["error"] == "Not allowed"
+
+
+def test_login(client, create_user):
+    # Access Token in body
+    response = client.post(
+        "/login",
+        json={"username": username, "password": password},
+    )
+
+    assert response.status_code == 200
+
+    access_token = response.get_json()["access"]
+
+    assert access_token
+
+    # Check that a cookie was returned
+    assert "Set-Cookie" in response.headers
+
+    cookie = response.headers.get("Set-Cookie")
+
+    # Check the cookie is HttpOnly
+    assert "HttpOnly" in cookie and "refresh_token" in cookie
+
+
+def test_invalid_login(client, create_user):
+    # Invalid password passed
+    response = client.post(
+        "/login",
+        json={"username": username, "password": "wrong-pass"},
+    )
+
+    assert response.status_code == 400
+
+    # Non existent user passed
+    response = client.post(
+        "/login",
+        json={"username": "fake-user", "password": password},
+    )
+
+    assert response.status_code == 400
+
+
+def test_create_comment(client, create_user):
+    # Get the access token
+    response = client.post(
+        "/login",
+        json={"username": username, "password": password},
+    )
+
+    access_token = response.get_json()["access"]
+
+    assert access_token
+
+    # Create a comment
+    response = client.post(
+        "/comment",
+        json={"content": "Comment content"},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 200
+
+    # Comment now exists in db
+
+
+def test_invalid_create_comment(client, create_user):
+    # Create with no auth
+    response = client.post(
+        "/comment",
+        json={"content": "Comment content"},
+    )
+
+    assert response.status_code == 401
+
+    # Create with invalid auth
+    response = client.post(
+        "/comment",
+        json={"content": "Comment content"},
+        headers={"Authorization": f"Bearer fake-token"},
+    )
+
+    assert response.status_code == 401
+
+    # Valid auth but miss formatted request
+    response = client.post(
+        "/login",
+        json={"username": username, "password": password},
+    )
+
+    access_token = response.get_json()["access"]
+
+    assert access_token
+
+    response = client.post(
+        "/comment",
+        json={"content": ""},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 400
