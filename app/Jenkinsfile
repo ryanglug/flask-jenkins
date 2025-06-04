@@ -17,13 +17,13 @@ pipeline {
         sh 'pytest'
       }
     }
-    stage('Build') {
-      steps {
-         docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-          def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-          image.push()
-          }
-      }
-    }
+    // stage('Build') {
+    //   steps {
+    //      docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+    //       def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+    //       image.push()
+    //       }
+    //   }
+    // }
   }
 }
