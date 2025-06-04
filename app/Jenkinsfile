@@ -1,0 +1,31 @@
+pipeline {
+  agent any
+
+  environment {
+      IMAGE_NAME = 'ryanglug/jenkins-flask'
+      IMAGE_TAG = 'latest'
+  }
+
+  stages {
+    stage('Test') {
+      agent {
+        docker {
+          image 'python:3.13-alpine'
+        }
+      }
+      steps {
+        sh 'apk add --no-cache build-base'
+        sh 'pip install -r requirements.txt'
+        sh 'pytest'
+      }
+    }
+    stage('Build') {
+      steps {
+         docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+          def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+          image.push()
+          }
+      }
+    }
+  }
+}
