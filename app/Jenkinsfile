@@ -23,9 +23,8 @@ pipeline {
         label 'docker-agent'
       }
       steps {
-         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
          sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-         sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
+         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push $IMAGE_NAME:$IMAGE_TAG'
       }
     }
   }
