@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Test') {
       agent {
-        label 'python'
+        label 'python-agent'
       }
       steps {
         sh 'apk add --no-cache build-base'
