@@ -4,6 +4,8 @@ pipeline {
   environment {
       IMAGE_NAME = 'ryanglug/jenkins-flask'
       IMAGE_TAG = 'latest'
+      DOCKER_USERNAME = credentials('dockerhub-user')
+      DOCKER_PASSWORD = credentials('dockerhub-pass')
   }
 
   stages {
@@ -16,13 +18,15 @@ pipeline {
         sh '. venv/bin/activate && cd app && pip install -r requirements.txt && pytest'
       }
     }
-    // stage('Build') {
-    //   steps {
-    //      docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-    //       def image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-    //       image.push()
-    //       }
-    //   }
-    // }
+    stage('Build') {
+      agent {
+        label 'docker-agent'
+      }
+      steps {
+         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+         sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+         sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
+      }
+    }
   }
 }
