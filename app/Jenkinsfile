@@ -31,7 +31,7 @@ pipeline {
     // }
     stage('Deploy') {
       agent {
-        label 'jenkins-agent'
+        label 'default-agent'
       }
       steps {
         sshagent(['ssh-key']) {
