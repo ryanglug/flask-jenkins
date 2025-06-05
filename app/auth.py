@@ -84,7 +84,12 @@ def login():
     response = make_response({"access": access_token})
 
     response.set_cookie(
-        "refresh_token", refresh_token, httponly=True, samesite="Strict"
+        "refresh_token",
+        refresh_token,
+        httponly=True,
+        samesite="Strict",
+        path="/",
+        max_age=24 * 60 * 60 * 7,
     )
 
     response.status_code = 200
