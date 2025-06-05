@@ -16,6 +16,13 @@ def teardown_db(exception):
 
 app.config["DATABASE"] = "auth.db"
 
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
+
+
 app.post("/register")(register)
 app.post("/login")(login)
 app.get("/refresh")(refresh)
