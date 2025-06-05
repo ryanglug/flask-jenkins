@@ -34,7 +34,7 @@ pipeline {
         label 'default-agent'
       }
       steps {
-        sshagent(['ubuntu']) {
+        sshagent(['ssh-key']) {
           sh 'ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "echo Connected! && docker info"'
         }
       }
