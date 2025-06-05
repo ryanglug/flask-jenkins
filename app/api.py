@@ -1,6 +1,6 @@
 from middleware import authenticate_token_middleware
 from flask import request, jsonify
-from db import create_comment
+from db import create_comment, get_comments
 
 
 @authenticate_token_middleware
@@ -18,3 +18,19 @@ def post_comment():
     create_comment(content, user["id"])
 
     return jsonify({"message": "Created comment successfully"}), 200
+
+
+@authenticate_token_middleware
+def get_user():
+    user = request.user
+
+    return jsonify({"user", user}), 200
+
+
+@authenticate_token_middleware
+def comments():
+    user = request.user
+
+    comments = get_comments(user["id"])
+
+    return jsonify({"comments", comments}), 200

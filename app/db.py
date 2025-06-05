@@ -52,3 +52,9 @@ def create_comment(content, user_id):
         "INSERT INTO comments (content, user_id) VALUES (?, ?)", (content, user_id)
     )
     db.commit()
+
+
+def get_comments(user_id):
+    db = get_db()
+    curs = db.execute("SELECT * FROM comments WHERE user_id = ?", (user_id,))
+    return curs.fetchmany()
