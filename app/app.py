@@ -14,13 +14,16 @@ def teardown_db(exception):
     close_db()
 
 
-app.config["DATABASE"] = "auth.db"
-
-
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Credentials"] = "true"
+    if response and response.headers:
+        # Avoid duplicate header issue
+        if "Access-Control-Allow-Credentials" not in response.headers:
+            response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
+
+
+app.config["DATABASE"] = "auth.db"
 
 
 app.post("/register")(register)
