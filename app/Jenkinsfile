@@ -6,25 +6,37 @@ pipeline {
       IMAGE_TAG = 'latest'
       DOCKER_USERNAME = credentials('dockerhub-user')
       DOCKER_PASSWORD = credentials('dockerhub-pass')
+      VM_USER = 'ubuntu'
+      VM_IP = '20.90.166.46'
   }
 
   stages {
-    stage('Test') {
+    // stage('Test') {
+    //   agent {
+    //     label 'python-agent'
+    //   }
+    //   steps {
+    //     sh 'python3 -m venv venv'
+    //     sh '. venv/bin/activate && cd app && pip install -r requirements.txt && pytest'
+    //   }
+    // }
+    // stage('Build') {
+    //   agent {
+    //     label 'docker-agent'
+    //   }
+    //   steps {
+    //      sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+    //      sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push $IMAGE_NAME:$IMAGE_TAG'
+    //   }
+    // }
+    stage('Deploy') {
       agent {
-        label 'python-agent'
+        label 'default-agent'
       }
       steps {
-        sh 'python3 -m venv venv'
-        sh '. venv/bin/activate && cd app && pip install -r requirements.txt && pytest'
-      }
-    }
-    stage('Build') {
-      agent {
-        label 'docker-agent'
-      }
-      steps {
-         sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push $IMAGE_NAME:$IMAGE_TAG'
+        sshagent(['ubuntu']) {
+          sh 'ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "echo Connected! && docker info"'
+        }
       }
     }
   }
