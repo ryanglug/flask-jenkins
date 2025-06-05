@@ -2,8 +2,11 @@ from flask import Flask
 from auth import register, login, refresh
 from api import post_comment
 from db import close_db
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 
 @app.teardown_appcontext
