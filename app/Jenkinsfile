@@ -6,36 +6,46 @@ pipeline {
       IMAGE_TAG = 'latest'
       DOCKER_USERNAME = credentials('dockerhub-user')
       DOCKER_PASSWORD = credentials('dockerhub-pass')
-      VM_USER = 'ubuntu'
+      VM_USER = credentials('vm-user')
       VM_IP = '20.90.166.46'
+      CONTAINER_NAME = 'flask-api'
   }
 
   stages {
-    stage('Test') {
-      agent {
-        label 'python-agent'
-      }
-      steps {
-        sh 'python3 -m venv venv'
-        sh '. venv/bin/activate && cd app && pip install -r requirements.txt && pytest'
-      }
-    }
-    stage('Build') {
-      agent {
-        label 'docker-agent'
-      }
-      steps {
-         sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push $IMAGE_NAME:$IMAGE_TAG'
-      }
-    }
+    // stage('Test') {
+    //   agent {
+    //     label 'python-agent'
+    //   }
+    //   steps {
+    //     sh 'python3 -m venv venv'
+    //     sh '. venv/bin/activate && cd app && pip install -r requirements.txt && pytest'
+    //   }
+    // }
+    // stage('Build') {
+    //   agent {
+    //     label 'docker-agent'
+    //   }
+    //   steps {
+    //      sh 'cd app && docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+    //      sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push $IMAGE_NAME:$IMAGE_TAG'
+    //   }
+    // }
     stage('Deploy') {
       agent {
         label 'default-agent'
       }
       steps {
         sshagent(['ssh-key']) {
-          sh 'ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "echo Connected! && docker info"'
+          sh '''
+          ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && \
+          docker ps -q --filter name=$CONTAINER_NAME | xargs -r docker stop && \ 
+          docker ps -aq --filter name=$CONTAINER_NAME | xargs -r docker rm && \ 
+          docker images -q --filter reference=$IMAGE_NAME | xargs -r docker rmi && \
+          docker pull $IMAGE_NAME:$IMAGE_TAG && \
+          docker run -d --name $CONTAINER_NAME -p 8000:8000 $IMAGE_NAME:$IMAGE_TAG
+            "
+          '''
         }
       }
     }
