@@ -24,7 +24,7 @@ def post_comment():
 def get_user():
     user = request.user
 
-    return jsonify({"user", user}), 200
+    return jsonify({"user": user}), 200
 
 
 @authenticate_token_middleware
@@ -33,4 +33,4 @@ def comments():
 
     comments = get_comments(user["id"])
 
-    return jsonify({"comments", comments}), 200
+    return jsonify({"comments": comments}), 200
