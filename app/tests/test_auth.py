@@ -31,7 +31,7 @@ def client():
 @pytest.fixture
 def create_user(client):
     response = client.post(
-        "/register", json={"username": username, "password": password}
+        "/api/register", json={"username": username, "password": password}
     )
     yield response
 
@@ -48,18 +48,18 @@ def test_register(create_user):
 
 def test_invalid_register(client, create_user):
     # Missing body
-    response = client.post("/register", json={"username": "", "password": password})
+    response = client.post("/api/register", json={"username": "", "password": password})
 
     assert response.status_code == 400
 
     # Missing password
-    response = client.post("/register", json={"username": username, "password": ""})
+    response = client.post("/api/register", json={"username": username, "password": ""})
 
     assert response.status_code == 400
 
     # Cannot create a user that already exists
     response = client.post(
-        "/register", json={"username": username, "password": password}
+        "/api/register", json={"username": username, "password": password}
     )
 
     assert response.status_code == 400
@@ -70,7 +70,7 @@ def test_invalid_register(client, create_user):
 def test_login(client, create_user):
     # Access Token in body
     response = client.post(
-        "/login",
+        "/api/login",
         json={"username": username, "password": password},
     )
 
@@ -92,7 +92,7 @@ def test_login(client, create_user):
 def test_invalid_login(client, create_user):
     # Invalid password passed
     response = client.post(
-        "/login",
+        "/api/login",
         json={"username": username, "password": "wrong-pass"},
     )
 
@@ -100,7 +100,7 @@ def test_invalid_login(client, create_user):
 
     # Non existent user passed
     response = client.post(
-        "/login",
+        "/api/login",
         json={"username": "fake-user", "password": password},
     )
 
@@ -110,7 +110,7 @@ def test_invalid_login(client, create_user):
 def test_create_comment(client, create_user):
     # Get the access token
     response = client.post(
-        "/login",
+        "/api/login",
         json={"username": username, "password": password},
     )
 
@@ -120,7 +120,7 @@ def test_create_comment(client, create_user):
 
     # Create a comment
     response = client.post(
-        "/comment",
+        "/api/comment",
         json={"content": "Comment content"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -133,7 +133,7 @@ def test_create_comment(client, create_user):
 def test_invalid_create_comment(client, create_user):
     # Create with no auth
     response = client.post(
-        "/comment",
+        "/api/comment",
         json={"content": "Comment content"},
     )
 
@@ -141,7 +141,7 @@ def test_invalid_create_comment(client, create_user):
 
     # Create with invalid auth
     response = client.post(
-        "/comment",
+        "/api/comment",
         json={"content": "Comment content"},
         headers={"Authorization": f"Bearer fake-token"},
     )
@@ -150,7 +150,7 @@ def test_invalid_create_comment(client, create_user):
 
     # Valid auth but miss formatted request
     response = client.post(
-        "/login",
+        "/api/login",
         json={"username": username, "password": password},
     )
 
@@ -159,7 +159,7 @@ def test_invalid_create_comment(client, create_user):
     assert access_token
 
     response = client.post(
-        "/comment",
+        "/api/comment",
         json={"content": ""},
         headers={"Authorization": f"Bearer {access_token}"},
     )
