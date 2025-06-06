@@ -3,6 +3,9 @@ from auth import register, login, refresh
 from api import post_comment, get_user, comments
 from db import close_db
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 

@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from db import find_user, create_user, store_refresh_token, verify_refresh_token
 import jwt
 import datetime
+import os
+
+env = os.getenv("ENVIRONMENT")
 
 ACCESS_SECRET = "access_secret"
 REFRESH_SECRET = "refresh_secret"
@@ -83,12 +86,14 @@ def login():
     # Attach refresh to cookie and access as json
     response = make_response({"access": access_token})
 
+    is_production = env == "Production"
+
     response.set_cookie(
         "refresh_token",
         refresh_token,
         httponly=True,
-        samesite="None",
-        secure=True,
+        samesite="Strict",
+        secure=False if is_production else True,
         max_age=24 * 60 * 60 * 7,
     )
 
