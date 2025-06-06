@@ -87,7 +87,7 @@ def login():
         "refresh_token",
         refresh_token,
         httponly=True,
-        samesite="Strict",
+        samesite="Lax",
         path="/",
         max_age=24 * 60 * 60 * 7,
     )
