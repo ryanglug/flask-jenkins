@@ -12,7 +12,12 @@ app = Flask(__name__)
 CORS(
     app,
     supports_credentials=True,
-    origins=["http://localhost:1234", "http://localhost:2000"],
+    origins=[
+        "http://localhost:1234",
+        "http://localhost:2000",
+        "http://20.90.166.46",
+        "https://20.90.166.46",
+    ],
 )
 
 

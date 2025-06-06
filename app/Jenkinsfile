@@ -8,7 +8,7 @@ pipeline {
       DOCKER_PASSWORD = credentials('dockerhub-pass')
       VM_USER = credentials('vm-user')
       VM_IP = '20.90.166.46'
-      CONTAINER_NAME = 'flask-api'
+      CONTAINER_NAME = 'flask-back'
   }
 
   stages {
