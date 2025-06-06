@@ -9,7 +9,11 @@ load_dotenv()
 
 app = Flask(__name__)
 
-CORS(app, supports_credentials=True, origins=["http://localhost:1234"])
+CORS(
+    app,
+    supports_credentials=True,
+    origins=["http://localhost:1234", "http://localhost:2000"],
+)
 
 
 @app.teardown_appcontext

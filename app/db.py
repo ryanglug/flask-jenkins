@@ -41,7 +41,7 @@ def store_refresh_token(token, user_id):
 def verify_refresh_token(refresh_token):
     db = get_db()
     cur = db.execute(
-        "SELECT user_id FROM refresh_token WHERE token = ?", (refresh_token,)
+        "SELECT user_id FROM refresh_tokens WHERE token = ?", (refresh_token,)
     )
     return cur.fetchone()
 
