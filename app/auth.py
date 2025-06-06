@@ -90,7 +90,6 @@ def login():
         samesite="Strict",
         secure=False,
         domain="localhost",
-        path="/",
         max_age=24 * 60 * 60 * 7,
     )
 
