@@ -83,11 +83,15 @@ def login():
     # Attach refresh to cookie and access as json
     response = make_response({"access": access_token})
 
+    domain = request.host.split(":")[0]
+
     response.set_cookie(
         "refresh_token",
         refresh_token,
         httponly=True,
-        samesite="Lax",
+        samesite="Strict",
+        secure=False,
+        domain=domain,
         path="/",
         max_age=24 * 60 * 60 * 7,
     )
