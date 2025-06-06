@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from auth import register, login, refresh
 from api import post_comment, get_user, comments
 from db import close_db
@@ -28,13 +28,16 @@ def teardown_db(exception):
 
 app.config["DATABASE"] = "auth.db"
 
+api_bp = Blueprint("api", __name__, url_prefix="/api")
 
-app.post("/register")(register)
-app.post("/login")(login)
-app.get("/refresh")(refresh)
-app.get("/user")(get_user)
-app.get("/comment")(comments)
-app.post("/comment")(post_comment)
+api_bp.post("/register")(register)
+api_bp.post("/login")(login)
+api_bp.get("/refresh")(refresh)
+api_bp.get("/user")(get_user)
+api_bp.get("/comment")(comments)
+api_bp.post("/comment")(post_comment)
+
+app.register_blueprint(api_bp)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
