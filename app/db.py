@@ -57,4 +57,8 @@ def create_comment(content, user_id):
 def get_comments(user_id):
     db = get_db()
     curs = db.execute("SELECT * FROM comments WHERE user_id = ?", (user_id,))
-    return curs.fetchmany()
+    rows = curs.fetchmany()
+
+    comments = [dict(row) for row in rows]
+
+    return comments
