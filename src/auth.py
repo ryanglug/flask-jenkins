@@ -119,8 +119,6 @@ def refresh():
         # Verify the token
         user = jwt.decode(refresh_token, REFRESH_SECRET, algorithms="HS256")
 
-        print("user", user, type(user))
-
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token expired"}), 400
 

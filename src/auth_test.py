@@ -37,8 +37,6 @@ def lite_register():
     username = data["username"]
     password = data["password"]
 
-    print("username", username, "password", password)
-
     if not username:
         return jsonify({"error": "No username supplied"}), 400
 
@@ -120,8 +118,6 @@ def lite_refresh():
     try:
         # Verify the token
         user = jwt.decode(refresh_token, REFRESH_SECRET, algorithms="HS256")
-
-        print("user", user, type(user))
 
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token expired"}), 400

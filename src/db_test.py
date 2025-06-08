@@ -3,7 +3,6 @@ from flask import current_app, g
 
 
 def get_db():
-    print("getting db")
     if "test_db" not in g:
         g.test_db = sqlite3.connect(current_app.config["DATABASE"])
         g.test_db.row_factory = sqlite3.Row

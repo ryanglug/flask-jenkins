@@ -31,11 +31,7 @@ def teardown_db(exception):
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-with app.app_context():
-    print("Is testing", app.config["TESTING"])
-
 if app.config["TESTING"]:
-    print("Setting testing")
     api_bp.post("/register")(lite_register)
     api_bp.post("/login")(lite_login)
     api_bp.get("/refresh")(lite_refresh)
