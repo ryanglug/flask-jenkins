@@ -3,14 +3,15 @@ from flask import current_app, g
 
 
 def get_db():
-    if "db" not in g:
-        g.db = sqlite3.connect(current_app.config["DATABASE"])
-        g.db.row_factory = sqlite3.Row
-    return g.db
+    print("getting db")
+    if "test_db" not in g:
+        g.test_db = sqlite3.connect(current_app.config["DATABASE"])
+        g.test_db.row_factory = sqlite3.Row
+    return g.test_db
 
 
 def close_db():
-    db = g.pop("db", None)
+    db = g.pop("test_db", None)
     if db is not None:
         db.close()
 
