@@ -5,7 +5,7 @@ from db import close_db
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 
@@ -25,8 +25,6 @@ CORS(
 def teardown_db(exception):
     close_db()
 
-
-app.config["DATABASE"] = "auth.db"
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 

@@ -1,7 +1,7 @@
 import pytest
 import tempfile
 from app import app
-from db import get_db, find_user
+from db_test import get_db, find_user
 import os
 import shutil
 
@@ -20,7 +20,7 @@ def client():
     with app.test_client() as client:
         with app.app_context():
             db = get_db()
-            with open("schema.sql", "r") as f:
+            with open("schema-tests.sql", "r") as f:
                 db.executescript(f.read())
             db.commit()
         yield client
