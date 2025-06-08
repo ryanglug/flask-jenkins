@@ -1,9 +1,9 @@
 from flask import Flask, Blueprint
 from auth import register, login, refresh
-from auth_test import lite_register, lite_login, lite_refresh
+from tests.auth_test import lite_register, lite_login, lite_refresh
 from api import post_comment, get_user, comments
-from api_test import lite_comments, lite_get_user, lite_post_comment
-from db_test import close_db
+from tests.api_test import lite_comments, lite_get_user, lite_post_comment
+from tests.db_test import close_db
 from flask_cors import CORS
 from dotenv import load_dotenv
 

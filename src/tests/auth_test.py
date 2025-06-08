@@ -1,6 +1,11 @@
 from flask import request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from db_test import find_user, create_user, store_refresh_token, verify_refresh_token
+from tests.db_test import (
+    find_user,
+    create_user,
+    store_refresh_token,
+    verify_refresh_token,
+)
 import jwt
 import datetime
 import os

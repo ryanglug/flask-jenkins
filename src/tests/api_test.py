@@ -1,6 +1,6 @@
 from middleware import authenticate_token_middleware
 from flask import request, jsonify
-from db_test import create_comment, get_comments
+from tests.db_test import create_comment, get_comments
 
 
 @authenticate_token_middleware
