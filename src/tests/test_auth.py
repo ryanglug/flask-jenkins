@@ -1,6 +1,6 @@
 import pytest
 import tempfile
-from app import app
+from app import create_app
 from db_test import get_db, find_user
 import os
 import shutil
@@ -14,8 +14,7 @@ def client():
     temp_dir = tempfile.mkdtemp()
     db_path = os.path.join(temp_dir, "test.db")
 
-    app.config["DATABASE"] = db_path
-    app.config["TESTING"] = True
+    app = create_app({"DATABASE": db_path, "TESTING": True})
 
     with app.test_client() as client:
         with app.app_context():
